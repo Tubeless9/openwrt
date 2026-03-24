@@ -1,0 +1,58 @@
+name: Build OpenWrt BTF
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y         build-essential         clang         flex         bison         g++         gawk         gcc-multilib         g++-multilib         gettext         git         libncurses5-dev         libssl-dev         python3         rsync         unzip         zlib1g-dev         file         wget
+
+    - name: Clone OpenWrt
+      run: |
+        git clone https://github.com/openwrt/openwrt
+        cd openwrt
+        git checkout v25.12.1
+
+    - name: Load config
+      run: |
+        cd openwrt
+        cp ../config/openwrt.config .config
+        make defconfig
+
+    - name: Update feeds
+      run: |
+        cd openwrt
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
+
+    - name: DIY script
+      run: |
+        cd openwrt
+        chmod +x ../scripts/diy.sh
+        ../scripts/diy.sh
+
+    - name: Download packages
+      run: |
+        cd openwrt
+        make download -j8
+
+    - name: Compile OpenWrt
+      run: |
+        cd openwrt
+        make -j$(nproc)
+
+    - name: Upload firmware
+      uses: actions/upload-artifact@v4
+      with:
+        name: openwrt-x86-btf-daed
+        path: openwrt/bin/targets/
