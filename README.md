@@ -1,4 +1,4 @@
-# OpenWrt x86 BTF + daed Build
+# OpenWrt x86 BTF + daed Build (Fixed)
 
 Auto build OpenWrt x86 firmware with BTF and daed support.
 
@@ -8,8 +8,7 @@ Auto build OpenWrt x86 firmware with BTF and daed support.
 - x86_64
 - LuCI
 - BTF enabled
-- dae
-- luci-app-daed
+- dae + luci-app-daed
 - eBPF support
 
 ## Build
